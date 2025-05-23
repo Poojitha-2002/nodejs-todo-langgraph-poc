@@ -62,7 +62,11 @@ Start the Server
 
 
 ## Screenshots
+
+**This is the Login Page
+**It will take email and password from the registeres users
 ![Image](https://github.com/user-attachments/assets/17f769fd-ebf1-4c5e-9365-2673360474c1)
+**This is the register page for new users
 ![Image](https://github.com/user-attachments/assets/fed937e1-d333-43f2-b461-275aea9636d4)
 ![225232515-4c100b6b-52e4-40f8-a6d4-85e30dc2f5e7](https://github.com/Ankit6098/Todos-nodejs/assets/92246613/487f548f-7ca6-4183-9443-c88c9f79c3f0)
 ![225232960-da554f1f-ba4a-41f8-9856-edaebe339d76](https://github.com/Ankit6098/Todos-nodejs/assets/92246613/25515d2e-1d72-498d-8044-59a01c6b9127)
