@@ -1,4 +1,4 @@
-from workflows.step2_graph import create_login_test_graph
+from workflows.step3_graph import create_login_test_graph
 
 
 def main():
