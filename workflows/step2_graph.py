@@ -14,5 +14,6 @@ def create_spec_file_generation_graph():
     graph.set_finish_point("GenerateSpec")
 
     app = graph.compile()
+    return app
 
    
