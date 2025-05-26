@@ -2,10 +2,12 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+from schemas import AppState
 import time
 
-def load_login_page(url):
+def load_login_page(state: AppState):
     print("Initializing Selenium WebDriver...")
+    url = state["login_url"]
     
     # Set up Chrome options
     chrome_options = Options()
@@ -33,8 +35,8 @@ def load_login_page(url):
         print(f"Screenshot saved as: {screenshot_path}")
         
         return {
+            "page_html": html_body,
             "title": page_title,
-            "html": html_body,
             "screenshot": screenshot_path,
             "driver": driver  # Returning driver object for subsequent nodes
         }
@@ -45,19 +47,19 @@ def load_login_page(url):
         return None
 
 # Example usage
-if __name__ == "__main__":
-    login_url = "http://127.0.0.1:4000/login"
-    print("Starting Node 1 - Page Loader")
-    print("="*50)
+# if __name__ == "__main__":
+#     login_url = "http://127.0.0.1:4000/login"
+#     print("Starting Node 1 - Page Loader")
+#     print("="*50)
     
-    page_data = load_login_page(login_url)
+#     page_data = load_login_page(login_url)
     
-    if page_data:
-        print("\nNode 1 executed successfully!")
-        print("You can now proceed to Node 2 with these outputs:")
-        print(f"- Page title: {page_data['title']}")
-        print(f"- HTML body length: {len(page_data['html'])} characters")
-        print(f"- Screenshot: {page_data['screenshot']}")
-        print(f"- Driver object retained for next steps")
-    else:
-        print("\nNode 1 failed. Please check the error message above.")
+#     if page_data:
+#         print("\nNode 1 executed successfully!")
+#         print("You can now proceed to Node 2 with these outputs:")
+#         print(f"- Page title: {page_data['title']}")
+#         print(f"- HTML body length: {len(page_data['page_html'])} characters")
+#         print(f"- Screenshot: {page_data['screenshot']}")
+#         print(f"- Driver object retained for next steps")
+#     else:
+#         print("\nNode 1 failed. Please check the error message above.")
