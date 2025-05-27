@@ -36,8 +36,8 @@ def load_login_page(state: AppState):
         
         return {
             "page_html": html_body,
+            "image_path": screenshot_path,
             "title": page_title,
-            "screenshot": screenshot_path,
             "driver": driver  # Returning driver object for subsequent nodes
         }
     except Exception as e:
