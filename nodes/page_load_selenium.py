@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
-from schemas import AppState
+from schemas.state_schemas import AppState
 import time
 
 def load_login_page(state: AppState):
@@ -38,7 +38,7 @@ def load_login_page(state: AppState):
             "page_html": html_body,
             "image_path": screenshot_path,
             "title": page_title,
-            "driver": driver  # Returning driver object for subsequent nodes
+            "driver_path": driver  # Returning driver object for subsequent nodes
         }
     except Exception as e:
         print(f"\nError loading page: {str(e)}")
