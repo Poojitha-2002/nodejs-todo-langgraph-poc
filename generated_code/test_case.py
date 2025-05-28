@@ -26,14 +26,12 @@ class TestLogin(unittest.TestCase):
         self.driver.quit()
 
     def test_login_success(self):
-        username = "testuser"  # Replace with a valid username
-        password = "testpass"  # Replace with a valid password
-        login(self.driver, self.url, username, password)
+        login(self.driver, self.url, "testuser", "testpassword")  # Replace with actual test credentials
         
         # Verify successful login
         WebDriverWait(self.driver, 10).until(EC.url_changes(self.url))
         self.assertIn("Dashboard", self.driver.title)  # Replace with the expected title after login
-        self.assertTrue(self.driver.find_element(By.ID, "logout"))  # Replace with an element that indicates a successful login
+        self.assertTrue(self.driver.find_element(By.ID, "logout"))  # Replace with an actual element that appears after login
 
 if __name__ == "__main__":
     unittest.main()
