@@ -9,6 +9,6 @@ The Login Page allows registered users to access their accounts by entering thei
 - **Password**: A field for the user to enter their password.
 
 ## Validation Rules
-- The email field should validate for a proper email format.
+- The email field must contain a valid email format.
 - Both the email and password fields must be filled out before submission.
 ```

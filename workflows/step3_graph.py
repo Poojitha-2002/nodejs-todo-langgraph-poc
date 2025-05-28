@@ -2,14 +2,17 @@ from langgraph.graph import StateGraph
 from nodes.page_load_selenium import load_login_page
 from schemas.state_schemas import AppState
 from nodes.code_generation_selenium import generate_selenium_code
+from nodes.test_case_generation import generate_test_case
 
 def create_login_test_graph():
     graph = StateGraph(AppState)
     graph.add_node("load_page", load_login_page)
     graph.add_node("generate_code", generate_selenium_code)
+    graph.add_node("test_case_file", generate_test_case)
 
     graph.set_entry_point("load_page")
     graph.add_edge("load_page", "generate_code")
-    graph.set_finish_point("generate_code")
+    graph.add_edge("generate_code", "test_case_file")
+    graph.set_finish_point("test_case_file")
 
     return graph.compile()

@@ -2,9 +2,9 @@ from workflows.step3_graph import create_login_test_graph
 from workflows.step2_graph import create_spec_file_generation_graph
 
 def main():
-    
+
     github_repo_url = "https://github.com/Poojitha-2002/nodejs-todo-langgraph-poc/tree/master"
-    
+
     # Compile and run the spec generation graph
     spec_graph = create_spec_file_generation_graph()
     final_state = spec_graph.invoke({"github_url": github_repo_url})
@@ -16,7 +16,7 @@ def main():
         f.write(final_state["spec_md"])
 
     print("✅ spec.md has been saved successfully.\n")    
-    
+
     step3_login_test_app = create_login_test_graph()
     inputs = {
         "login_spec": final_state["spec_md"],
