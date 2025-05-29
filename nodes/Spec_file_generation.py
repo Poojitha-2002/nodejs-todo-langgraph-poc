@@ -43,8 +43,12 @@ def extract_login_info(state: AppState) -> AppState:
     image_urls = re.findall(r'!\[.*?\]\((https?://[^\s)]+)\)', readme)
     images_text = "\n".join(image_urls) if image_urls else "No image URLs found."
 
-    prompt_template = ChatPromptTemplate.from_template("""
-From the provided README document and the list of image URLs, you are to extract ONLY the information that is strictly and exclusively related to the **Login Page** or **Login Functionality**.
+    prompt_template = ChatPromptTemplate.from_messages([
+    ("system", 
+     "You are a meticulous software requirements analyst. Only return information explicitly related to login functionality. Be strict in filtering irrelevant details."),
+    
+    ("human", 
+    """From the provided README document and the list of image URLs, you are to extract ONLY the information that is strictly and exclusively related to the **Login Page** or **Login Functionality**.
 
 **Focus your extraction on the following aspects of the Login Page:**
 1.  **Input Fields:** Identify all fields visible on the login screen (e.g., "email address input", "password field", "username").
@@ -58,15 +62,13 @@ From the provided README document and the list of image URLs, you are to extract
 *   Any information not directly pertaining to the login page or login functionality.
 *   General UI descriptions or screenshots that are not focused on login, even if the login elements are part of a larger screen. Only include URLs if the primary subject of the screenshot is the login interface.
 
-**Input Data:**
-
 **Screenshot URLs:**
 {image_urls}
 
 **README Content:**
 {readme}
-
 """)
+])
 
     formatted_prompt = prompt_template.format_messages(
         image_urls=images_text,
@@ -87,26 +89,28 @@ def generate_spec(state: AppState) -> AppState:
     start_time = time.time()
     login_info = state["login_context"]
 
-    prompt_template = ChatPromptTemplate.from_template("""
-From the provided README document and the list of image URLs, you are to extract ONLY the information that is strictly and exclusively related to the **Login Page** or **Login Functionality**.
+    prompt_template = ChatPromptTemplate.from_messages([
+    ("system", 
+     "You are a senior QA analyst tasked with writing precise UI specifications."),
+    ("human", 
+     """From the provided README document and the list of image URLs, you are to extract ONLY the information that is strictly and exclusively related to the **Login Page** or **Login Functionality**.
 
 **Focus your extraction on the following aspects of the Login Page:**
 1. **Login Page Specification:** 
 2. **Description:** Add the login page description here
-3.  **Input Fields:** Identify all fields visible on the login screen (e.g., "email address input", "password field", "username").
-4.  **Validation Rules:** Detail any validation performed on the input fields (e.g., "email must be a valid format", "password must be at least 8 characters").
+3. **Input Fields:** Identify all fields visible on the login screen (e.g., "email address input", "password field", "username").
+4. **Validation Rules:** Detail any validation performed on the input fields (e.g., "email must be a valid format", "password must be at least 8 characters").
 
 **Strictly Exclude:**
-*   Any information not directly pertaining to the login page or login functionality.
-*   General UI descriptions or screenshots that are not focused on login, even if the login elements are part of a larger screen. Only include URLs if the primary subject of the screenshot is the login interface.
+* Any information not directly pertaining to the login page or login functionality.
+* General UI descriptions or screenshots that are not focused on login, even if the login elements are part of a larger screen. Only include URLs if the primary subject of the screenshot is the login interface.
 
 **Input Data:**
 
-
 **Login Info:**
 {login_info}
-
 """)
+])
 
     formatted_prompt = prompt_template.format_messages(login_info=login_info)
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest",
