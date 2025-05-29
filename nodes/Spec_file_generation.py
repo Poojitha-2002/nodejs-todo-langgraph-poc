@@ -1,5 +1,6 @@
 from typing import TypedDict
 from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage
 from langchain.prompts import ChatPromptTemplate
 import requests
@@ -43,22 +44,28 @@ def extract_login_info(state: AppState) -> AppState:
     images_text = "\n".join(image_urls) if image_urls else "No image URLs found."
 
     prompt_template = ChatPromptTemplate.from_template("""
-From the following README and list of image URLs, extract ONLY the information strictly related to the **Login Page**.
+From the provided README document and the list of image URLs, you are to extract ONLY the information that is strictly and exclusively related to the **Login Page** or **Login Functionality**.
 
-Focus on:
-- What fields are shown on the login screen (e.g., email, password)
-- What behavior is expected (successful login, failure cases)
-- What validation is performed
-- Screenshot URLs that clearly relate to login (ignore unrelated UI other than login page)
+**Focus your extraction on the following aspects of the Login Page:**
+1.  **Input Fields:** Identify all fields visible on the login screen (e.g., "email address input", "password field", "username").
+2.  **Expected Behavior & Scenarios:** Describe the expected outcomes of user interactions, including:
+    *   Successful login process.
+    *   Failure cases (e.g., incorrect credentials, invalid input format, account lockout).
+3.  **Validation Rules:** Detail any validation performed on the input fields (e.g., "email must be a valid format", "password must be at least 8 characters").
+4.  **Relevant Screenshot URLs:** From the "Screenshot URLs" list provided below, identify and list ONLY those URLs that clearly and directly depict the Login Page itself or critical elements of the login process.
 
-Exclude:
-- Any general UI screenshots not related to login
+**Strictly Exclude:**
+*   Any information not directly pertaining to the login page or login functionality.
+*   General UI descriptions or screenshots that are not focused on login, even if the login elements are part of a larger screen. Only include URLs if the primary subject of the screenshot is the login interface.
 
-Screenshot URLs:
+**Input Data:**
+
+**Screenshot URLs:**
 {image_urls}
 
-README:
+**README Content:**
 {readme}
+
 """)
 
     formatted_prompt = prompt_template.format_messages(
@@ -66,7 +73,9 @@ README:
         readme=readme
     )
 
-    llm = ChatOpenAI(api_key=api_key, model="gpt-4o-mini", temperature=0)
+    llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest",
+        google_api_key="AIzaSyAYJE8n_m_jEUWQL2LZvFpcshqLVN5oEBg",
+        temperature=0)
     response = llm.invoke(formatted_prompt)
     end_time = time.time()
     print(f"extract_login_info took {end_time - start_time:.2f} seconds")
@@ -79,22 +88,30 @@ def generate_spec(state: AppState) -> AppState:
     login_info = state["login_context"]
 
     prompt_template = ChatPromptTemplate.from_template("""
-Generate a Markdown file named `spec.md` for the **Login Page** using the info below.
+From the provided README document and the list of image URLs, you are to extract ONLY the information that is strictly and exclusively related to the **Login Page** or **Login Functionality**.
 
-Format it like:
-# Login Page Specification
-## Description
-## Input Fields
-## Validation Rules
+**Focus your extraction on the following aspects of the Login Page:**
+1. **Login Page Specification:** 
+2. **Description:** Add the login page description here
+3.  **Input Fields:** Identify all fields visible on the login screen (e.g., "email address input", "password field", "username").
+4.  **Validation Rules:** Detail any validation performed on the input fields (e.g., "email must be a valid format", "password must be at least 8 characters").
 
-Do not include any additional sections beyond what is specified above.
+**Strictly Exclude:**
+*   Any information not directly pertaining to the login page or login functionality.
+*   General UI descriptions or screenshots that are not focused on login, even if the login elements are part of a larger screen. Only include URLs if the primary subject of the screenshot is the login interface.
 
-Login Page Details:
+**Input Data:**
+
+
+**Login Info:**
 {login_info}
+
 """)
 
     formatted_prompt = prompt_template.format_messages(login_info=login_info)
-    llm = ChatOpenAI(api_key=api_key, model="gpt-4o-mini", temperature=0)
+    llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest",
+        google_api_key="AIzaSyAYJE8n_m_jEUWQL2LZvFpcshqLVN5oEBg",
+        temperature=0)   
     response = llm.invoke(formatted_prompt)
     end_time = time.time()
     print(f"generate_spec took {end_time - start_time:.2f} seconds")
