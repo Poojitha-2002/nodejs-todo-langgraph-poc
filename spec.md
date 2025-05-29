@@ -1,14 +1,14 @@
-```markdown
-# Login Page Specification
+**1. Login Page Specification:**  A login page is required to authenticate users before accessing the application.
 
-## Description
-The Login Page allows registered users to access their accounts by entering their email and password. Successful login will grant access to the user's account, while failure cases typically involve incorrect email/password combinations.
+**2. Description:** The login page allows users to access the application by entering their email address and password.
 
-## Input Fields
-- **Email**: A field for the user to enter their registered email address.
-- **Password**: A field for the user to enter their password.
+**3. Input Fields:**
+* Email address input
+* Password field
 
-## Validation Rules
-- The email field should validate for a proper email format.
-- Both the email and password fields must be filled out before submission.
-```
+**4. Validation Rules:**
+* Email and password fields must contain values.  Further validation (e.g., email format, password length/complexity) is likely implemented but not explicitly specified.
+
+**Relevant Screenshot URL:**
+
+* https://github.com/user-attachments/assets/17f769fd-ebf1-4c5e-9365-2673360474c1
