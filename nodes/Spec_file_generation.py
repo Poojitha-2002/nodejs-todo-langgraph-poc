@@ -12,7 +12,7 @@ from langgraph.graph import StateGraph, END
 
 
 load_dotenv()
-api_key = os.getenv("OPENAI_API_KEY")
+api_key = os.getenv("GEMINI_API_KEY")
 
 class AppState(TypedDict):
     github_url: str
@@ -74,7 +74,7 @@ From the provided README document and the list of image URLs, you are to extract
     )
 
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest",
-        google_api_key="AIzaSyAYJE8n_m_jEUWQL2LZvFpcshqLVN5oEBg",
+        google_api_key=api_key,
         temperature=0)
     response = llm.invoke(formatted_prompt)
     end_time = time.time()
@@ -110,7 +110,7 @@ From the provided README document and the list of image URLs, you are to extract
 
     formatted_prompt = prompt_template.format_messages(login_info=login_info)
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest",
-        google_api_key="AIzaSyAYJE8n_m_jEUWQL2LZvFpcshqLVN5oEBg",
+        google_api_key=api_key,
         temperature=0)   
     response = llm.invoke(formatted_prompt)
     end_time = time.time()
