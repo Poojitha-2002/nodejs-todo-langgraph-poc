@@ -24,6 +24,7 @@ def generate_selenium_code(state: AppState) -> dict:
     page_html = state["page_html"]
     image_path = state.get("image_path")
     webdriver_path = state.get("driver_path", "")
+    retry_count = state.get("retry_count", 0)
 
     driver_line = (
         f'driver = webdriver.Chrome("{webdriver_path}")'
@@ -85,4 +86,7 @@ def generate_selenium_code(state: AppState) -> dict:
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(generated_code)
 
-    return {"selenium_code_path": output_path}
+    return {
+        "selenium_code_path": output_path,
+        "retry_count": retry_count + 1
+    }

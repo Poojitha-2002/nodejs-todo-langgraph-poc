@@ -7,3 +7,4 @@ class AppState(TypedDict):
     selenium_code_path: str
     image_path: Optional[str]
     driver_path: Optional[str]
+    retry_count: Optional[int]
