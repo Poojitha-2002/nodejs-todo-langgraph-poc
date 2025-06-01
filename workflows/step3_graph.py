@@ -1,6 +1,6 @@
 from langgraph.graph import StateGraph
 from nodes.page_load_selenium import load_login_page
-from schemas.state_schemas import AppState
+from nodes.state_schemas import AppState
 from nodes.code_generation_selenium import generate_selenium_code
 from nodes.test_case_generation import generate_test_case_with_report
 

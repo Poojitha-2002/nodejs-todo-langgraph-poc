@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage
 from langchain.prompts import ChatPromptTemplate
-from schemas.state_schemas import AppState
+from nodes.state_schemas import AppState
 
 def extract_code_blocks(text: str) -> str:
     match = re.search(r"```(?:python)?\s*(.*?)```", text, re.DOTALL)
