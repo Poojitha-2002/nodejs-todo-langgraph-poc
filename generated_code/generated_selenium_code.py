@@ -21,6 +21,6 @@ def login(url, username, password):
     password_field.send_keys(password)
     login_button.click()
 
-    # Add any necessary assertions or actions after login here.  For example, check for successful login redirect.
+    # Add any necessary assertions or waits for post-login actions here.  For example, wait for redirection or check for a specific element on the next page.
 
-    #driver.quit() #Uncomment if you want to close the browser after login.
+    #driver.quit() #Uncomment if you want to close the browser after login

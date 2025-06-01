@@ -28,13 +28,9 @@ class TestLogin(unittest.TestCase):
 
     def test_successful_login(self):
         driver = login("http://127.0.0.1:4000/login", "manasakonduru11@gmail.com", "123456")
-        try:
-            WebDriverWait(driver, 10).until(EC.url_contains("/dashboard"))
-            self.assertTrue("/dashboard" in driver.current_url)
-        except:
-            self.fail("Login failed")
-        finally:
-            driver.quit()
+        WebDriverWait(driver, 10).until(EC.url_contains("/dashboard"))
+        self.assertTrue('/dashboard' in driver.current_url)
+        driver.quit()
 
     def tearDown(self):
         self.driver.quit()

@@ -1,5 +1,6 @@
 from typing import TypedDict, Optional
 
+
 class AppState(TypedDict):
     github_url: str
     readme: str
@@ -13,4 +14,4 @@ class AppState(TypedDict):
     driver_path: Optional[str]
     retry_count: Optional[int]
     email: Optional[str]
-    password: Optional[str]
+    password : Optional[str]
