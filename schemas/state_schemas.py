@@ -1,6 +1,10 @@
 from typing import TypedDict, Optional
 
 class AppState(TypedDict):
+    github_url: str
+    readme: str
+    login_context: str
+    spec_md: str
     login_spec: str
     login_url: str
     page_html: str
