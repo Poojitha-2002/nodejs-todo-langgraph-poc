@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
-from schemas.state_schemas import AppState
+from nodes.state_schemas import AppState
 import time
 
 def load_login_page(state: AppState):
