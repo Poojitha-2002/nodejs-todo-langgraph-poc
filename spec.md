@@ -4,7 +4,7 @@ This document specifies the UI requirements for the application's login page and
 
 **2. Description:**
 
-The login page allows users to access the application by entering their email address and password.  Upon successful authentication, the user is redirected to the main application interface.  Failure to authenticate results in an error message.
+The login page allows users to access the application by entering their email address and password.  It provides feedback to the user regarding successful login or login failures due to incorrect credentials or invalid input format.
 
 **3. Input Fields:**
 
@@ -14,4 +14,4 @@ The login page allows users to access the application by entering their email ad
 **4. Validation Rules:**
 
 *   Email Address: Must be a valid email format (e.g.,  `someone@example.com`).
-*   Password:  Specific validation rules for password length, complexity, and character types are not provided and require further investigation.  However, the system should handle cases of incorrect passwords and account lockouts.
+*   Password:  Specific validation rules for password length, complexity, and character types are not yet defined.  Further specification is required.

@@ -33,9 +33,6 @@ def generate_test_case(state: AppState) -> dict:
     if not login_url:
         return {"error": "Missing login_url in state."}
 
-    print("Invoking LLM to generate login test case...")
-    print(f"Prompt Input: email={email}, password={password}")
-
     prompt = ChatPromptTemplate.from_messages(
         [
             (
@@ -112,10 +109,10 @@ def generate_test_report_from_output(raw_output: str) -> str:
             (
                 "human",
                 """Here is the raw unittest output:\n\n{raw_output}\n\n
-Generate a test report in markdown format with:
-- Summary section (total, passed, failed)
-- Bullet points for each test with result
-- Clear formatting""",
+                Generate a test report in markdown format with:
+                - Summary section (total, passed, failed)
+                - Bullet points for each test with result
+                - Clear formatting""",
             ),
         ]
     )

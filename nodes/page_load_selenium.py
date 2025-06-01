@@ -30,10 +30,8 @@ def load_login_page(state: AppState):
         screenshot_path = "login_page.png"
         driver.save_screenshot(screenshot_path)
         
-        print("\nPage loaded successfully!")
-        print(f"Page Title: {page_title}")
-        print(f"Screenshot saved as: {screenshot_path}")
-        
+        print(f"\nPage loaded successfully! saved as: {screenshot_path}")
+    
         return {
             "page_html": html_body,
             "image_path": screenshot_path,

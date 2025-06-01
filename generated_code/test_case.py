@@ -10,11 +10,11 @@ def login(url, username, password):
 
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "email")))
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "password")))
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//input[@type='submit']")))
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "form")))
 
     email_field = driver.find_element(By.ID, "email")
     password_field = driver.find_element(By.ID, "password")
-    login_button = driver.find_element(By.XPATH, "//input[@type='submit']")
+    login_button = driver.find_element(By.CSS_SELECTOR, "input[type='submit']")
 
     email_field.send_keys(username)
     password_field.send_keys(password)
@@ -28,9 +28,13 @@ class TestLogin(unittest.TestCase):
 
     def test_successful_login(self):
         driver = login("http://127.0.0.1:4000/login", "manasakonduru11@gmail.com", "123456")
-        WebDriverWait(driver, 10).until(EC.url_contains("/dashboard"))
-        self.assertTrue('/dashboard' in driver.current_url)
-        driver.quit()
+        try:
+            WebDriverWait(driver, 10).until(EC.url_contains("/dashboard"))
+            self.assertTrue("/dashboard" in driver.current_url)
+        except:
+            self.fail("Login failed")
+        finally:
+            driver.quit()
 
     def tearDown(self):
         self.driver.quit()
