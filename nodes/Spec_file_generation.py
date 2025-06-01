@@ -9,16 +9,11 @@ import os
 from dotenv import load_dotenv
 import time
 from langgraph.graph import StateGraph, END
-
+from nodes.state_schemas import AppState
 
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 
-class AppState(TypedDict):
-    github_url: str
-    readme: str
-    login_context: str
-    spec_md: str
 
 def fetch_readme(state: AppState) -> AppState:
     github_url = state['github_url'].rstrip('/')
