@@ -16,6 +16,15 @@ api_key = os.getenv("GEMINI_API_KEY")
 
 
 def fetch_readme(state: AppState) -> AppState:
+    """
+    Fetches the README.md file from the GitHub repository provided in the state.
+    Args:
+        state (AppState): The application state containing 'github_url'.
+    Returns:
+        AppState: The updated state including the fetched 'readme' content.
+    Raises:
+        ValueError: If the GitHub URL is invalid or README.md cannot be fetched.
+    """
     github_url = state['github_url'].rstrip('/')
     match = re.match(r'https://github\.com/([^/]+)/([^/]+)', github_url)
     if not match:
@@ -33,6 +42,21 @@ def fetch_readme(state: AppState) -> AppState:
 
 
 def extract_login_info(state: AppState) -> AppState:
+    """
+    Extracts login page-related information from the README using an LLM.
+
+    It searches for relevant image URLs and README content, then queries
+    the Gemini LLM to extract only login-specific functionality, input fields,
+    validation rules, and relevant screenshots.
+
+    Args:
+        state (AppState): The application state containing 'readme'.
+
+    Returns:
+        AppState: The updated state including the extracted 'login_context'.
+    """
+    ...
+
     start_time = time.time()
     readme = state["readme"]
     image_urls = re.findall(r'!\[.*?\]\((https?://[^\s)]+)\)', readme)
@@ -81,6 +105,19 @@ def extract_login_info(state: AppState) -> AppState:
 
 
 def generate_spec(state: AppState) -> AppState:
+    """
+    Generates a detailed UI specification for the login page using LLM output.
+
+    It takes the extracted login-related context and formats it into a
+    structured spec document describing login inputs, validation rules,
+    and behaviors.
+
+    Args:
+        state (AppState): The application state containing 'login_context'.
+
+    Returns:
+        AppState: The updated state with a new 'spec_md' key containing the generated spec.
+    """
     start_time = time.time()
     login_info = state["login_context"]
 
