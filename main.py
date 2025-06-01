@@ -1,7 +1,7 @@
 from workflows.step3_graph import create_login_test_graph
 from workflows.step2_graph import create_spec_file_generation_graph
 from nodes.test_case_generation import generate_test_case_with_report  # ✅ Import here
-from nodes.state_schemas import AppState
+from schemas.state_schemas import AppState
 import os
 
 def main():
@@ -24,6 +24,8 @@ def main():
     inputs = {
         "login_spec": final_state["spec_md"],
         "login_url": "http://127.0.0.1:4000/login",
+        "email": "manasakonduru11@gmail.com",
+        "password": "123456",
     }
     step3_result = step3_login_test_app.invoke(inputs)
 

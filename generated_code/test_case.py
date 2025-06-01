@@ -10,11 +10,11 @@ def login(url, username, password):
 
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "email")))
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "password")))
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "form")))
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//input[@type='submit']")))
 
     email_field = driver.find_element(By.ID, "email")
     password_field = driver.find_element(By.ID, "password")
-    login_button = driver.find_element(By.XPATH, "//form/div[3]/input[@type='submit']")
+    login_button = driver.find_element(By.XPATH, "//input[@type='submit']")
 
     email_field.send_keys(username)
     password_field.send_keys(password)
@@ -27,7 +27,7 @@ class TestLogin(unittest.TestCase):
         self.driver = webdriver.Chrome()
 
     def test_successful_login(self):
-        driver = login("http://localhost:4000/login", "manasakonduru11@gmail.com", "123456")
+        driver = login("http://127.0.0.1:4000/login", "manasakonduru11@gmail.com", "123456")
         try:
             WebDriverWait(driver, 10).until(EC.url_contains("/dashboard"))
             self.assertTrue("/dashboard" in driver.current_url)

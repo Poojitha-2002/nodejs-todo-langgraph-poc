@@ -12,3 +12,5 @@ class AppState(TypedDict):
     image_path: Optional[str]
     driver_path: Optional[str]
     retry_count: Optional[int]
+    email: Optional[str]
+    password: Optional[str]

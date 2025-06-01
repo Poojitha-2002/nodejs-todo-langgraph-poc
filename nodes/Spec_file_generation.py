@@ -9,7 +9,7 @@ import os
 from dotenv import load_dotenv
 import time
 from langgraph.graph import StateGraph, END
-from nodes.state_schemas import AppState
+from schemas.state_schemas import AppState
 
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")

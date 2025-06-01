@@ -7,15 +7,15 @@ def login(url, username, password):
     driver = webdriver.Chrome() # Replace with your webdriver initialization
     driver.get(url)
 
-    # Wait for the page to load and elements to be present
+    # Wait for elements to be present
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "email")))
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "password")))
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "form"))) #Added to ensure form is loaded
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//input[@type='submit']")))
 
 
     email_field = driver.find_element(By.ID, "email")
     password_field = driver.find_element(By.ID, "password")
-    login_button = driver.find_element(By.XPATH, "//form/div[3]/input[@type='submit']") #Using XPath for submit button
+    login_button = driver.find_element(By.XPATH, "//input[@type='submit']")
 
     email_field.send_keys(username)
     password_field.send_keys(password)
@@ -23,4 +23,4 @@ def login(url, username, password):
 
     # Add any necessary assertions or actions after login here.  For example, check for successful login redirect.
 
-    #driver.quit() #Uncomment if you want to close the browser after login
+    #driver.quit() #Uncomment if you want to close the browser after login.

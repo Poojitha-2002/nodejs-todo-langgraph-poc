@@ -4,7 +4,7 @@ import subprocess
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
-from nodes.state_schemas import AppState
+from schemas.state_schemas import AppState
 
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
@@ -34,6 +34,8 @@ def generate_test_case(state: AppState) -> dict:
         return {"error": "Missing login_url in state."}
 
     print("Invoking LLM to generate login test case...")
+    print(f"Prompt Input: email={email}, password={password}")
+
     prompt = ChatPromptTemplate.from_messages(
         [
             (
@@ -42,15 +44,20 @@ def generate_test_case(state: AppState) -> dict:
             ),
             (
                 "human",
-                "Given the following Python Selenium function that performs a login operation, generate a test file `test_case.py` that:\n"
-                "- Reuses the exact email `{email}` and password `{password}` values.\n"
-                "- Imports necessary modules (`unittest`, `selenium`, etc.)\n"
-                "- Sets up and tears down the Selenium WebDriver correctly\n"
-                "- Calls the login function with appropriate arguments\n"
-                "- Verifies successful login by checking that the current URL contains '/dashboard' after login, page title, or specific element\n"
-                "- Defines all required classes and methods cleanly\n\n"
-                "### Login URL:\n{login_url}\n\n"
-                "### Selenium Function:\n{selenium_code}",
+                """Given the following Python Selenium function that performs a login operation, generate a test file `test_case.py` that:
+                - Reuses the exact email {email} and password {password} values.
+                - Imports necessary modules (`unittest`, `selenium`, etc.)
+                - Sets up and tears down the Selenium WebDriver correctly
+                - Calls the login function with appropriate arguments
+                - Verifies successful login by checking that the current URL contains '/dashboard' after login, page title, or specific element
+                - Defines all required classes and methods cleanly
+
+                ### Login URL:
+                {login_url}
+
+                ### Selenium Function:
+                {selenium_code}
+            """,
             ),
         ]
     )
@@ -58,8 +65,8 @@ def generate_test_case(state: AppState) -> dict:
     formatted_messages = prompt.format_messages(
         login_url=login_url,
         selenium_code=selenium_code,
-        email=state.get("email", ""),
-        password=state.get("password", ""),
+        email=email,
+        password=password,
     )
 
     try:
