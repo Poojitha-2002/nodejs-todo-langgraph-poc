@@ -14,6 +14,10 @@ def create_spec_file_generation_graph():
     graph.set_finish_point("GenerateSpec")
 
     app = graph.compile()
+    
+    mermaid_code = app.get_graph().draw_mermaid_png()
+    with open("spec_generation_graph.png", "wb") as f:
+        f.write(mermaid_code)
     return app
 
    

@@ -24,4 +24,10 @@ def create_login_test_graph():
     )
     graph.set_finish_point("generate_test_case_with_report")
 
-    return graph.compile()
+    app = graph.compile()
+    
+    mermaid_code = app.get_graph().draw_mermaid_png()
+    with open("test_case_generation.png", "wb") as f:
+        f.write(mermaid_code)
+    
+    return app
