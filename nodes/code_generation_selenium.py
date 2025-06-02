@@ -86,6 +86,8 @@ def generate_selenium_code(state: AppState) -> dict:
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(generated_code)
 
+    print("Selenium code generated successfully!")
+
     return {
         "selenium_code_path": output_path,
         "retry_count": retry_count + 1
