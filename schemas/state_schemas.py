@@ -15,3 +15,4 @@ class AppState(TypedDict):
     retry_count: Optional[int]
     email: Optional[str]
     password : Optional[str]
+    error: Optional[str]

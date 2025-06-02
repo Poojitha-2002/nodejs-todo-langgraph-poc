@@ -12,6 +12,19 @@ def extract_code_blocks(text: str) -> str:
     return match.group(1).strip() if match else text.strip()
 
 def generate_selenium_code(state: AppState) -> dict:
+    """
+        Generates Selenium login code using Gemini AI.
+
+        Takes page HTML, login spec, and optional image.
+        Sends a prompt to Gemini to create Python code.
+        Saves the code to a file and returns the path.
+
+        Args:
+            state (AppState): Login info and settings.
+
+        Returns:
+            dict: Path to code and updated retry count.
+    """
     load_dotenv()
     gemini_api_key = os.getenv("GEMINI_API_KEY")
     if not gemini_api_key:
@@ -25,6 +38,7 @@ def generate_selenium_code(state: AppState) -> dict:
     image_path = state.get("image_path")
     webdriver_path = state.get("driver_path", "")
     retry_count = state.get("retry_count", 0)
+    error = state.get("error", "")
 
     driver_line = (
         f'driver = webdriver.Chrome("{webdriver_path}")'
@@ -56,7 +70,8 @@ def generate_selenium_code(state: AppState) -> dict:
              f"- Initializes the WebDriver as:\n  {driver_line}\n\n"
              f"### Login URL:\n{login_url}\n\n"
              f"### Login Spec:\n{login_spec}\n\n"
-             "Return only a Python function named `login(url, username, password)`, no extra text."
+             "Return only a Python function named `login(url, username, password)`, no extra text.\n"
+             f"If the function is likely to fail or run into issues, adjust and regenerate to fix them. Error message : {error}"
         )
     ])
 
