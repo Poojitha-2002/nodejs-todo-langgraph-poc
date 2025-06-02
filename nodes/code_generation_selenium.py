@@ -71,6 +71,8 @@ def generate_selenium_code(state: AppState) -> dict:
              f"### Login URL:\n{login_url}\n\n"
              f"### Login Spec:\n{login_spec}\n\n"
              "Return only a Python function named `login(url, username, password)`, no extra text.\n"
+             "- Ensure all code blocks like `try`, `except`, and `finally` are complete and properly indented.\n"
+             "- Avoid leaving any blocks empty — if needed, include at least a `pass` or meaningful comment inside.\n"
              f"If the function is likely to fail or run into issues, adjust and regenerate to fix them. Error message : {error}"
         )
     ])
