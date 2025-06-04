@@ -18,7 +18,7 @@ def main():
 
     # print("✅ Generated spec.md and saved successfully.\n")
     
-    spec_file_path = "/home/poojitha.mamidi/Desktop/poc_team_b_langgraph/nodejs-todo-langgraph-poc/spec_folder/spec.md"
+    spec_file_path = "spec_folder/spec.md"
     
     if not os.path.exists(spec_file_path):
         print(f"❌ Spec file not found at {spec_file_path}")
