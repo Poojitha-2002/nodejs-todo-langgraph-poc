@@ -5,25 +5,35 @@ from schemas.state_schemas import AppState
 import os
 
 def main():
-    github_repo_url = (
-        "https://github.com/Poojitha-2002/nodejs-todo-langgraph-poc/tree/master"
-    )
+    # github_repo_url = (
+    #     "https://github.com/Poojitha-2002/nodejs-todo-langgraph-poc/tree/master"
+    # )
 
-    # Step 1: Generate spec
-    spec_graph = create_spec_file_generation_graph()
-    final_state = spec_graph.invoke({"github_url": github_repo_url})
+    # # Step 1: Generate spec
+    # spec_graph = create_spec_file_generation_graph()
+    # final_state = spec_graph.invoke({"github_url": github_repo_url})
 
-    with open("spec.md", "w", encoding="utf-8") as f:
-        f.write(final_state["spec_md"])
+    # with open("spec.md", "w", encoding="utf-8") as f:
+    #     f.write(final_state["spec_md"])
 
-    print("✅ Generated spec.md and saved successfully.\n")
+    # print("✅ Generated spec.md and saved successfully.\n")
+    
+    spec_file_path = "/home/poojitha.mamidi/Desktop/poc_team_b_langgraph/nodejs-todo-langgraph-poc/spec_folder/spec.md"
+    
+    if not os.path.exists(spec_file_path):
+        print(f"❌ Spec file not found at {spec_file_path}")
+        return
+
+    with open(spec_file_path, "r", encoding="utf-8") as f:
+        spec_md = f.read()
+    
 
     # Step 2 + 3: Combined — generates Selenium + runs test + saves report
     step3_login_test_app = create_login_test_graph()
     inputs = {
-        "login_spec": final_state["spec_md"],
-        "login_url": "http://127.0.0.1:4000/login",
-        "email": "manasakonduru11@gmail.com",
+        "login_spec": spec_md,
+        "login_url": "http://127.0.0.1:4100/login",
+        "email": "pooja@gmail.com",
         "password": "123456",
     }
     step3_result = step3_login_test_app.invoke(inputs)
