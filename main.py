@@ -32,8 +32,8 @@ def main():
     step3_login_test_app = create_login_test_graph()
     inputs = {
         "login_spec": spec_md,
-        "login_url": "http://127.0.0.1:4100/login",
-        "email": "pooja@gmail.com",
+        "login_url": "http://127.0.0.1:4000/login",
+        "email": "manasakonduru11@gmail.com",
         "password": "123456",
     }
     step3_result = step3_login_test_app.invoke(inputs)

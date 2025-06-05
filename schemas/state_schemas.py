@@ -16,3 +16,4 @@ class AppState(TypedDict):
     email: Optional[str]
     password : Optional[str]
     error: Optional[str]
+    status: Optional[str]

@@ -1,6 +1,7 @@
 import os
 import re
 import subprocess
+from typing import Any
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -134,7 +135,7 @@ def save_test_report(report: str, path: str = "generated_code/test_report.md"):
     print(f": Test report saved to {path}")
 
 
-def generate_test_case_with_report(state: AppState) -> dict:
+def generate_test_case_with_report(state: AppState) -> dict[str, bool | str | None | Any] | AppState:
     result = generate_test_case(state)
     if "error" in result:
         return {
@@ -149,7 +150,14 @@ def generate_test_case_with_report(state: AppState) -> dict:
     parsed_code = result["test_code"]
 
     raw_output = run_tests_and_get_output(test_file_path)
-    print("\n:test_tube: Raw Test Output:\n", raw_output)
+    print("\n:test_tube: Raw Test Output:\n", raw_output, "\n\n\n----------")
+
+    if "FAILED" in raw_output or "ERROR" in raw_output or "Traceback" in raw_output:
+        print("❌ Test failed. Passing error to code generator.")
+        state["error"] = raw_output  # this is where your raw_output goes
+        state["status"] = "fail"
+        state["retry_count"] = state.get("retry_count", 0) + 1
+        return state
 
     report = generate_test_report_from_output(raw_output)
     report_path = "generated_code/test_report.md"
