@@ -152,13 +152,9 @@ def save_test_report(report: str, path: str = "generated_code/test_report.md"):
     print(f": Test report saved to {path}")
 
 
-<<<<<<< Updated upstream
-def generate_test_case_with_report(state: AppState) -> dict[str, bool | str | None | Any] | AppState:
-=======
 def generate_test_case_with_report(
     state: AppState,
 ) -> dict[str, bool | str | None | Any] | AppState:
->>>>>>> Stashed changes
     result = generate_test_case(state)
     if "error" in result:
         return {

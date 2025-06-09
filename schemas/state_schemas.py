@@ -16,8 +16,5 @@ class AppState(TypedDict):
     email: Optional[str]
     password : Optional[str]
     error: Optional[str]
-<<<<<<< Updated upstream
     status: Optional[str]
-=======
     home_page_url: Optional[str]
->>>>>>> Stashed changes
