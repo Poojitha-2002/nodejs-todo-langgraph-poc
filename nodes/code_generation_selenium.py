@@ -67,6 +67,7 @@ def generate_selenium_code(state: AppState) -> dict:
              "- Locate the login/submit button using attribute-based XPath or CSS selectors — do not use tag names alone.\n"
              "- If needed, use XPath or CSS based on attributes when IDs aren't available.\n"
              "- Use the attached screenshot (if any) to assist.\n"
+             "- At the start of the function, check if `username` or `password` are empty or None. "
              f"### Login URL:\n{login_url}\n\n"
              f"### Login Spec:\n{login_spec}\n\n"
              "- Ensure all code blocks are complete, properly indented, and not left empty — include at least a pass or a meaningful comment if needed."
