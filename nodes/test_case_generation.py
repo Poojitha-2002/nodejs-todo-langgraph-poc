@@ -6,9 +6,20 @@ from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from schemas.state_schemas import AppState
+import importlib.util
+import sys
 
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
+
+
+def load_login_function_from_path(path: str):
+    module_name = "dynamic_login_module"
+    spec = importlib.util.spec_from_file_location(module_name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    return module.login
 
 
 def extract_code_blocks(text: str) -> str:
@@ -17,11 +28,11 @@ def extract_code_blocks(text: str) -> str:
 
 
 def generate_test_case(state: AppState) -> dict:
-    selenium_code_path = state.get("selenium_code_path")
-    login_url = state.get("login_url")
-    email = state.get("email")
-    password = state.get("password")
-    home_page_url = state.get("home_page_url")
+    selenium_code_path = state["selenium_code_path"]
+    login_url = state["login_url"]
+    email = state["email"]
+    password = state["password"]
+    home_page_url = state["home_page_url"]
 
     if selenium_code_path and os.path.exists(selenium_code_path):
         with open(selenium_code_path, "r", encoding="utf-8") as f:
@@ -164,19 +175,45 @@ def generate_test_case_with_report(
             "status": "fail",
             "error": result["error"],
         }
+    state["error"] = None
 
     test_file_path = result["test_file_path"]
     parsed_code = result["test_code"]
 
-    raw_output = run_tests_and_get_output(test_file_path)
-    print("\n:test_tube: Raw Test Output:\n", raw_output, "\n\n\n----------")
+    login_url = state.get("login_url")
+    username = state.get("email")
+    password = state.get("password")
+    home_page_url = state.get("home_page_url")
 
-    if "FAILED" in raw_output or "ERROR" in raw_output or "Traceback" in raw_output:
-        print("❌ Test failed. Passing error to code generator.")
-        state["error"] = raw_output  # this is where your raw_output goes
+    try:
+
+        selenium_code_path = state["selenium_code_path"]
+        login = load_login_function_from_path(selenium_code_path)
+        prevalidate_result = login(login_url, username, password, home_page_url)
+
+        if isinstance(prevalidate_result, dict) and not prevalidate_result.get("success", True):
+            state["status"] = "fail"
+            state["error"] = prevalidate_result.get("error", "Unknown error")
+            return state
+        else:
+            try:
+                prevalidate_result.quit()
+            except Exception:
+                pass
+            state["error"] = None
+    except Exception as e:
         state["status"] = "fail"
-        state["retry_count"] = state.get("retry_count", 0) + 1
+        state["error"] = f"Pre-validation error: {str(e)}"
         return state
+
+    raw_output = run_tests_and_get_output(test_file_path)
+
+    # if "Traceback" in raw_output and "login" in raw_output:
+    #     print("❌ Test failed. Passing error to code generator.")
+    #     state["error"] = raw_output  # this is where your raw_output goes
+    #     state["status"] = "fail"
+    #     state["retry_count"] = state.get("retry_count", 0) + 1
+    #     return state
 
     report = generate_test_report_from_output(raw_output)
     report_path = "generated_code/test_report.md"

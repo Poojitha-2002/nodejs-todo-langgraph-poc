@@ -58,7 +58,7 @@ def generate_selenium_code(state: AppState) -> dict:
             "human",
              "You are given a login page's HTML and its functional specification.\n\n"
              "Your task:\n"
-             "- Write a Python function named `login(driver, url, username, password)` using Selenium.\n"
+             "- Write a Python function named `login(url, username, password, home_page_url_segment)` using Selenium.\n"
              f"### HTML Page:\n{page_html}\n\n"
              "- Loads the login page using the provided URL\n"
              "- Wait for the page to fully load.\n"
@@ -70,6 +70,7 @@ def generate_selenium_code(state: AppState) -> dict:
              f"### Login URL:\n{login_url}\n\n"
              f"### Login Spec:\n{login_spec}\n\n"
              "- Ensure all code blocks are complete, properly indented, and not left empty — include at least a pass or a meaningful comment if needed."
+             "- Do not generate the example usage of the code"
              f"If the function is likely to fail or run into issues, adjust and regenerate to fix them. Error message : {error}"
         )
     ])
@@ -90,15 +91,20 @@ def generate_selenium_code(state: AppState) -> dict:
 
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.2)
 
-    response = llm.invoke([HumanMessage(content=messages[-1].content)])
+    # response = llm.invoke([HumanMessage(content=messages[-1].content)])
 
-    generated_code = extract_code_blocks(response.content)
+    # generated_code = extract_code_blocks(response.content)
 
-    output_dir = "generated_code"
-    os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, "generated_selenium_code.py")
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(generated_code)
+    # output_dir = "generated_code"
+    # os.makedirs(output_dir, exist_ok=True)
+    # output_path = os.path.join(output_dir, "generated_selenium_code.py")
+    # with open(output_path, "w", encoding="utf-8") as f:
+    #     f.write(generated_code)
+
+    output_path = "generated_code/generated_selenium_code.py"
+
+    with open(output_path, "r", encoding="utf-8") as f:
+        f.read()
 
     print("Selenium code generated successfully!")
 
