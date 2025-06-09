@@ -147,7 +147,7 @@ def generate_test_report_from_output(raw_output: str) -> str:
 
 
 def save_test_report(report: str, path: str = "generated_code/test_report.md"):
-    with open(path, "w", encoding="utf-8") as f:
+    with open(path, "a", encoding="utf-8") as f:
         f.write(report)
     print(f": Test report saved to {path}")
 
