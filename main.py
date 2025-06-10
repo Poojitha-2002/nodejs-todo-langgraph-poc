@@ -32,9 +32,9 @@ def main():
     inputs = {
         "login_spec": spec_md,
         "login_url": "http://127.0.0.1:4000/login",
-        "email": "manasakonduru11@gmail.com",
-        "password": "123456",
-        "home_page_url": "http://127.0.0.1:4100/dashboard",
+        "email": os.getenv("EMAIL"),
+        "password": os.getenv("PASSWORD"),
+        "home_page_url": "http://127.0.0.1:4000/dashboard",
     }
     step3_result = step3_login_test_app.invoke(inputs)
 

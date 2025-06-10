@@ -56,26 +56,31 @@ def generate_selenium_code(state: AppState) -> dict:
         ),
         (
             "human",
-             "You are given a login page's HTML and its functional specification.\n\n"
-             "Your task:\n"
-             "- Write a Python function named `login(driver, url, username, password)` using Selenium.\n"
-             f"### HTML Page:\n{page_html}\n\n"
-             "- Loads the login page using the provided URL\n"
-             "- Wait for the page to fully load.\n"
-             "- Use the provided HTML Page to determine selectors."
-             "- Locate the username and password fields using the best available selectors (id, name, type)\n"
-             "- Locate the login/submit button using attribute-based XPath or CSS selectors — do not use tag names alone.\n"
-             "- If needed, use XPath or CSS based on attributes when IDs aren't available.\n"
-             "- Use the attached screenshot (if any) to assist.\n"
-             "- At the start of the function, check if `username` or `password` are empty or None. "
-             f"### Login URL:\n{login_url}\n\n"
-             f"### Login Spec:\n{login_spec}\n\n"
-             "- Ensure all code blocks are complete, properly indented, and not left empty — include at least a pass or a meaningful comment if needed."
-             f"If the function is likely to fail or run into issues, adjust and regenerate to fix them. Error message : {error}"
+             """You are given a login page's HTML and its functional specification.
+             Your task:
+             - Write a Python function named `login(url, username, password, home_page_url_segment)` using Selenium.\n
+             ### HTML Page: {page_html}
+             - Loads the login page using the provided URL
+             - Wait for the page to fully load.
+             - Use the provided HTML Page to determine selectors.
+             - Locate the username and password fields using the best available selectors (id, name, type)
+             - Locate the login/submit button using attribute-based XPath or CSS selectors — do not use tag names alone.
+             - If needed, use XPath or CSS based on attributes when IDs aren't available.
+             - Use the attached screenshot (if any) to assist.
+             ### Login URL: {login_url}
+             ### Login Spec: {login_spec}
+             Ensure all code blocks are complete, properly indented, and not left empty — include at least a pass or a meaningful comment if needed.
+             Do not generate the example usage of the code
+             If the function is likely to fail or run into issues, adjust and regenerate to fix them. Error message : {error}"""
         )
     ])
 
-    messages = prompt.format_messages()
+    messages = prompt.format_messages(
+        login_url=login_url,
+        page_html=page_html,
+        login_spec=login_spec,
+        error=error
+    )
 
     if image_data:
         messages[-1].content = [
@@ -100,6 +105,11 @@ def generate_selenium_code(state: AppState) -> dict:
     output_path = os.path.join(output_dir, "generated_selenium_code.py")
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(generated_code)
+
+    # output_path = "generated_code/generated_selenium_code.py"
+    #
+    # with open(output_path, "r", encoding="utf-8") as f:
+    #     f.read()
 
     print("Selenium code generated successfully!")
 
