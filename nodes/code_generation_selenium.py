@@ -91,20 +91,20 @@ def generate_selenium_code(state: AppState) -> dict:
 
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.2)
 
-    # response = llm.invoke([HumanMessage(content=messages[-1].content)])
+    response = llm.invoke([HumanMessage(content=messages[-1].content)])
 
-    # generated_code = extract_code_blocks(response.content)
+    generated_code = extract_code_blocks(response.content)
 
-    # output_dir = "generated_code"
-    # os.makedirs(output_dir, exist_ok=True)
-    # output_path = os.path.join(output_dir, "generated_selenium_code.py")
-    # with open(output_path, "w", encoding="utf-8") as f:
-    #     f.write(generated_code)
+    output_dir = "generated_code"
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = os.path.join(output_dir, "generated_selenium_code.py")
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(generated_code)
 
-    output_path = "generated_code/generated_selenium_code.py"
-
-    with open(output_path, "r", encoding="utf-8") as f:
-        f.read()
+    # output_path = "generated_code/generated_selenium_code.py"
+    #
+    # with open(output_path, "r", encoding="utf-8") as f:
+    #     f.read()
 
     print("Selenium code generated successfully!")
 
