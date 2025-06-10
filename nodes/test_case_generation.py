@@ -55,7 +55,8 @@ def generate_test_case(state: AppState) -> dict:
             ),
             (
                 "human",
-                """Given a Selenium login function, generate a Python `unittest` file `test_case.py`. The `login` function should:
+                """Given a file path generated_code.generated_selenium_code.py, generate a Python `unittest` file `test_case.py`.:
+                - Import the existing login function from the provided file path generated_code.generated_selenium_code.py. (Do not redefine it)
                 - Take `url`, `username`, `password`, and `home_page_url_segment` as arguments.
                 - Initialize and manage the WebDriver (e.g., Chrome).
                 - Navigate to the login URL.
@@ -132,15 +133,17 @@ def generate_test_report_from_output(raw_output: str) -> str:
         [
             (
                 "system",
-                "You are a Python QA engineer. Create a clean, readable test report based on the raw output from Python's unittest.",
+                "You are a Python QA engineer. Create a clean, HTML test report based on the raw output from Python's unittest.",
             ),
             (
                 "human",
                 """Here is the raw unittest output:\n\n{raw_output}\n\n
-                Generate a test report in markdown format with:
+                Generate a test report in HTML format with:
                 - Summary section (total, passed, failed)
                 - Bullet points for each test with result
-                - Clear formatting""",
+                - Clear formatting
+                - Only valid HTML content in the response.(No markdown)
+                """,
             ),
         ]
     )
@@ -157,7 +160,7 @@ def generate_test_report_from_output(raw_output: str) -> str:
         return f"Error: {e}"
 
 
-def save_test_report(report: str, path: str = "generated_code/test_report.md"):
+def save_test_report(report: str, path: str = "generated_code/test_report.html"):
     with open(path, "w", encoding="utf-8") as f:
         f.write(report)
     print(f": Test report saved to {path}")
@@ -216,7 +219,7 @@ def generate_test_case_with_report(
     #     return state
 
     report = generate_test_report_from_output(raw_output)
-    report_path = "generated_code/test_report.md"
+    report_path = "generated_code/test_report.html"
     save_test_report(report, report_path)
 
     report_generated = os.path.exists(report_path)
