@@ -8,3 +8,5 @@ python-dotenv==1.1.0
 langchain-core==0.3.62
 google-generativeai
 langchain-google-genai
+coverage
+pytest-cov

@@ -1,0 +1,10 @@
+[run]
+branch = True
+source = nodes, workflows, generated_code
+parallel = True
+concurrency = thread
+dynamic_context = test_function
+
+[report]
+show_missing = True
+skip_covered = True
