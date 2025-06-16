@@ -1,5 +1,5 @@
-from typing import TypedDict, Optional, List
-from langchain_core.messages import BaseMessage
+from typing import TypedDict, Optional, Annotated
+from langgraph.graph import add_messages
 
 
 class AppState(TypedDict):
@@ -19,7 +19,7 @@ class AppState(TypedDict):
     error: Optional[str]
     status: Optional[str]
     home_page_url: Optional[str]
-    messages: List[BaseMessage]
+    messages: Annotated[list, add_messages]
     reflect_loop_count: int = 0
 
 class ReflectionState(AppState):

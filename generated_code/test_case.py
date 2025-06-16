@@ -14,35 +14,46 @@ class TestLogin(unittest.TestCase):
         password = "123456"
         home_page_url_segment = "http://127.0.0.1:4000/dashboard"
         driver = login(url, username, password, home_page_url_segment)
-        self.assertTrue(driver is not False)
+        self.assertTrue(driver is not False, "Login failed")
         self.assertIn(home_page_url_segment, driver.current_url)
         driver.quit()
 
 
-    def test_failed_login_wrong_password(self):
+    def test_invalid_password(self):
         url = "http://127.0.0.1:4000/login"
         username = "manasakonduru11@gmail.com"
         password = "wrong_password"
         home_page_url_segment = "http://127.0.0.1:4000/dashboard"
         result = login(url, username, password, home_page_url_segment)
-        self.assertFalse(result)
+        self.assertFalse(result, "Login should have failed with invalid password")
 
 
-    def test_failed_login_wrong_username(self):
+    def test_invalid_username(self):
         url = "http://127.0.0.1:4000/login"
-        username = "wrong_username@gmail.com"
+        username = "invalid_username@example.com"
         password = "123456"
         home_page_url_segment = "http://127.0.0.1:4000/dashboard"
         result = login(url, username, password, home_page_url_segment)
-        self.assertFalse(result)
+        self.assertFalse(result, "Login should have failed with invalid username")
 
-    def test_failed_login_empty_fields(self):
+
+    def test_missing_username(self):
         url = "http://127.0.0.1:4000/login"
         username = ""
+        password = "123456"
+        home_page_url_segment = "http://127.0.0.1:4000/dashboard"
+        result = login(url, username, password, home_page_url_segment)
+        self.assertFalse(result, "Login should have failed with missing username")
+
+
+    def test_missing_password(self):
+        url = "http://127.0.0.1:4000/login"
+        username = "manasakonduru11@gmail.com"
         password = ""
         home_page_url_segment = "http://127.0.0.1:4000/dashboard"
         result = login(url, username, password, home_page_url_segment)
-        self.assertFalse(result)
+        self.assertFalse(result, "Login should have failed with missing password")
+
 
 
 if __name__ == '__main__':
