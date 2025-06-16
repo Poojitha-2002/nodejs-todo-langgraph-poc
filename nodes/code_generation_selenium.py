@@ -4,7 +4,8 @@ import base64
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage
-from langchain.prompts import ChatPromptTemplate
+from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.output_parsers import StrOutputParser
 from schemas.state_schemas import AppState
 
 def extract_code_blocks(text: str) -> str:
@@ -39,6 +40,7 @@ def generate_selenium_code(state: AppState) -> dict:
     webdriver_path = state.get("driver_path", "")
     retry_count = state.get("retry_count", 0)
     error = state.get("error", "")
+    reflect_loop_count = state.get("reflect_loop_count",0)
 
     driver_line = (
         f'driver = webdriver.Chrome("{webdriver_path}")'
@@ -72,28 +74,29 @@ def generate_selenium_code(state: AppState) -> dict:
              "- Ensure all code blocks are complete, properly indented, and not left empty — include at least a pass or a meaningful comment if needed."
              "- Do not generate the example usage of the code"
              f"If the function is likely to fail or run into issues, adjust and regenerate to fix them. Error message : {error}"
-        )
+        ),
+        MessagesPlaceholder("messages")
     ])
 
-    messages = prompt.format_messages()
-
+    messages = prompt.format_messages(
+    messages=state.get("messages", []),
+    page_html=page_html,
+    login_url=login_url,
+    login_spec=login_spec,
+    error=error,
+)
     if image_data:
-        messages[-1].content = [
-            {"type": "text", "text": messages[-1].content},
-            {
-                "type": "image_url",
-                "image_url": {
-                    "url": f"data:image/jpeg;base64,{image_data}",
-                    "mime_type": "image/jpeg"
-                }
-            }
-        ]
+        image_note = "\nA screenshot is also provided as base64:\n" + image_data[:500] + "...\n"
+        messages[-1].content += image_note
+
 
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.2)
 
-    response = llm.invoke([HumanMessage(content=messages[-1].content)])
+    chain = prompt | llm | StrOutputParser()
 
-    generated_code = extract_code_blocks(response.content)
+    response = chain.invoke({"messages": [HumanMessage(content=messages[-1].content)]})
+
+    generated_code = extract_code_blocks(response)
 
     output_dir = "generated_code"
     os.makedirs(output_dir, exist_ok=True)
@@ -110,5 +113,6 @@ def generate_selenium_code(state: AppState) -> dict:
 
     return {
         "selenium_code_path": output_path,
-        "retry_count": retry_count + 1
+        "retry_count": retry_count + 1,
+        "reflect_loop_count" : reflect_loop_count+1
     }

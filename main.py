@@ -5,19 +5,6 @@ from schemas.state_schemas import AppState
 import os
 
 def main():
-    # github_repo_url = (
-    #     "https://github.com/Poojitha-2002/nodejs-todo-langgraph-poc/tree/master"
-    # )
-
-    # # Step 1: Generate spec
-    # spec_graph = create_spec_file_generation_graph()
-    # final_state = spec_graph.invoke({"github_url": github_repo_url})
-
-    # with open("spec.md", "w", encoding="utf-8") as f:
-    #     f.write(final_state["spec_md"])
-
-    # print("✅ Generated spec.md and saved successfully.\n")
-
     spec_file_path = "spec_folder/spec.md"
 
     if not os.path.exists(spec_file_path):

@@ -3,6 +3,7 @@ node_modules/
 __pycache__/
 *.py[cod]
 *.pyc
-
+.env
 **/__pycache__/
 **/*.py[cod].env
+venv

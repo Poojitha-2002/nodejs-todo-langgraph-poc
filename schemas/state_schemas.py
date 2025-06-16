@@ -1,4 +1,5 @@
-from typing import TypedDict, Optional
+from typing import TypedDict, Optional, List
+from langchain_core.messages import BaseMessage
 
 
 class AppState(TypedDict):
@@ -18,3 +19,9 @@ class AppState(TypedDict):
     error: Optional[str]
     status: Optional[str]
     home_page_url: Optional[str]
+    messages: List[BaseMessage]
+    reflect_loop_count: int = 0
+
+class ReflectionState(AppState):
+    should_reflect: bool
+    

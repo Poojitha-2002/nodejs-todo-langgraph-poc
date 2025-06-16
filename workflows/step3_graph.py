@@ -1,9 +1,11 @@
 from langgraph.graph import StateGraph
 from nodes.page_load_selenium import load_login_page
 from nodes.code_generation_selenium import generate_selenium_code
+from nodes.reflection_code_generation import reflection_on_code_gen
 from nodes.test_case_generation import generate_test_case_with_report
 from nodes.reflection_node import reflect_and_correct_code
 from schemas.state_schemas import AppState
+import logging
 
 
 def create_login_test_graph():
@@ -11,12 +13,28 @@ def create_login_test_graph():
 
     graph.add_node("load_page", load_login_page)
     graph.add_node("generate_code", generate_selenium_code)
+    graph.add_node("reflect_code", reflection_on_code_gen)
     graph.add_node("generate_test_case_with_report", generate_test_case_with_report)
     graph.add_node("reflect_and_correct_code", reflect_and_correct_code)
 
     graph.set_entry_point("load_page")
     graph.add_edge("load_page", "generate_code")
-    graph.add_edge("generate_code", "generate_test_case_with_report")
+    graph.add_edge("generate_code","reflect_code")
+    # graph.add_edge("generate_code", "generate_test_case_with_report")
+    graph.add_conditional_edges(
+    "reflect_code",
+    lambda state: (
+        "reflect" if state.get('should_reflect', False)
+        else "generate_test"
+    )
+    ,
+    {
+        "reflect":"generate_code",
+        "generate_test":"generate_test_case_with_report"
+    }
+)
+    # graph.add_edge("reflect_code", "generate_code")
+    graph.add_edge("reflect_code", "generate_test_case_with_report")
 
     graph.add_conditional_edges(
         "generate_test_case_with_report",
@@ -24,11 +42,15 @@ def create_login_test_graph():
             "end"
             if state.get("status") == "success"
             else (
-                "reflect_and_correct_code"
+                "correct_code"
                 if state.get("retry_count", 0) < 3
                 else "end"
             )
         ),
+        {
+            "end":"__end__",
+            "correct_code":"reflect_and_correct_code"
+        }
     )
 
     graph.add_edge("reflect_and_correct_code", "generate_test_case_with_report")
