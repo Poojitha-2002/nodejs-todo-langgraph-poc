@@ -44,3 +44,5 @@ def create_login_test_graph():
     mermaid_code = app.get_graph().draw_mermaid_png()
     with open("test_case_generation.png", "wb") as f:
         f.write(mermaid_code)
+
+    return app
