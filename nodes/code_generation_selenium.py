@@ -7,6 +7,7 @@ from langchain_core.messages import HumanMessage
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
 from schemas.state_schemas import AppState
+import logging
 
 
 def extract_code_blocks(text: str) -> str:
@@ -37,7 +38,9 @@ def generate_selenium_code(state: AppState) -> dict:
 
     login_url = state["login_url"]
     login_spec = state["login_spec"]
-    page_html = state["page_html"]
+    # page_html = state["page_html"]
+    page_html = state.get("page_html")
+    logging.info("PAGE_HTML here: \n: ",page_html)
     image_path = state.get("image_path")
     webdriver_path = state.get("driver_path", "")
     retry_count = state.get("retry_count", 0)
@@ -55,49 +58,6 @@ def generate_selenium_code(state: AppState) -> dict:
         with open(image_path, "rb") as f:
             image_data = base64.b64encode(f.read()).decode("utf-8")
 
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            (
-                "system",
-                "You are a helpful coding assistant specializing in Selenium WebDriver. "
-                "Your only task is to return clean, executable Python code with appropriate imports "
-                "and no conversational explanation or markdown fences (```). "
-                "Ensure proper WebDriver setup (e.g., `webdriver.Chrome()`) is only done if the function "
-                "is explicitly designed as an entry point for a new session, and never call "
-                "`driver.quit()` or `driver.close()` within the functional methods you generate."
-                "Focus on creating reusable functions that accept a `driver` instance as their first argument.",
-            ),
-            (
-                "human",
-                "You are given a web application's HTML, its current URL (which is a starting/login URL), "
-                "a comprehensive functional specification, and a README file describing the application.\n\n"
-                "Your task is to:\n"
-                "- Analyze the provided information (HTML, URL, specification, README) to understand the application's overall "
-                "  functionalities, key pages, and typical user workflows. This includes, but is not limited to, "
-                "  login/authentication, navigation, data entry, form submissions, and interactions with various UI elements.\n"
-                "- Generate one or more Python functions using Selenium WebDriver to automate these interactions "
-                "  with the web application. Each function should encapsulate a distinct user action or workflow (e.g., "
-                "  `login_user(driver, url, username, password)`, `add_new_todo_item(driver, item_text)`, "
-                "  `navigate_to_settings(driver)`). If a function requires navigating to a specific URL, "
-                "  it MUST accept that URL as an explicit parameter (e.g., `def navigate_to_page(driver, url):`).\n"
-                "- Functions should accept a `driver` instance as their first argument if they perform actions on the browser. "
-                "  The responsibility of initializing and quitting the WebDriver instance should be left to the test runner "
-                "  or the calling environment, NOT within these functions.\n"
-                "- For each function, use the best available Selenium selectors (ID, Name, CSS Selector, XPath by attribute) "
-                "  to locate elements. Avoid using tag names alone, especially `TAG_NAME` for buttons or inputs if more specific attributes are available.\n"
-                "- Include appropriate explicit and implicit waits to ensure elements are present, visible, and interactive, "
-                "  and the page is fully loaded before attempting interactions.\n"
-                "- If an attached screenshot is provided, use it to assist in identifying elements and flows.\n\n"
-                f"### Current Page URL (initial point of interaction): {login_url}\n\n"
-                f"### HTML Body of the Current Page:\n{page_html}\n\n"
-                f"### Overall Application Specification (from spec_md):\n{login_spec}\n\n"
-                "- Ensure all code blocks are complete, properly indented, and ready to be executed.\n"
-                "- Do not generate example usage of the code. Only define the functions.\n"
-                "- If the generated function is likely to fail or run into issues based on previous feedback, "
-                f"  adjust and regenerate to fix them. Previous error message or feedback: {error}",
-            ),
-        ]
-    )
     prompt = ChatPromptTemplate.from_messages([
         (
             "system", "You are a helpful coding assistant. Only return clean, executable Python code with no explanation."
@@ -162,7 +122,7 @@ def generate_selenium_code(state: AppState) -> dict:
 
     print("Selenium code generated successfully!")
 
-    return {"selenium_code_path": output_path, "retry_count": retry_count + 1}
+    # return {"selenium_code_path": output_path, "retry_count": retry_count + 1}
     return {
         "selenium_code_path": output_path,
         "retry_count": retry_count + 1,
