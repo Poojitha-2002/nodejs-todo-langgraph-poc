@@ -67,7 +67,7 @@ def generate_test_case(state: AppState) -> dict:
             ),
             (
                 "human",
-                """Given the following Python Selenium script, which is located at `generated_code/generated_selenium_code.py`,
+                f"""Given the following Python Selenium script, which is located at `generated_code/generated_selenium_code.py`,
                 generate a Python `unittest` file named `test_case.py`.
                 **Instructions for `test_case.py`:**
                 - Import relevant functions, classes, or the entire module from `generated_code.generated_selenium_code`. Do NOT redefine the original Selenium logic.

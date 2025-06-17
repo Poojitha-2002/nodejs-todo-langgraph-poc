@@ -1,0 +1,42 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test Report</title>
+<style>
+body { font-family: sans-serif; }
+table { width: 100%; border-collapse: collapse; }
+th, td { border: 1px solid black; padding: 8px; }
+th { background-color: #f2f2f2; }
+</style>
+</head>
+<body>
+<h1>Test Report</h1>
+
+<h2>Summary</h2>
+<table>
+  <tr>
+    <th>Total Tests</th>
+    <th>Passed</th>
+    <th>Failed</th>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td>0</td>
+    <td>6</td>
+  </tr>
+</table>
+
+<h2>Test Results</h2>
+<ul>
+  <li>test_successful_login: <span style="color:red;">FAILED</span> - AssertionError: 'http://127.0.0.1:4003/dashboard' not found in 'data:,'</li>
+  <li>test_login_with_incorrect_username: <span style="color:red;">FAILED</span> - AssertionError: AssertionError not raised</li>
+  <li>test_login_with_incorrect_password: <span style="color:red;">FAILED</span> - AssertionError: AssertionError not raised</li>
+  <li>test_login_with_empty_username: <span style="color:red;">FAILED</span> - AssertionError: AssertionError not raised</li>
+  <li>test_login_with_empty_password: <span style="color:red;">FAILED</span> - AssertionError: AssertionError not raised</li>
+  <li>test_login_with_special_characters: <span style="color:red;">FAILED</span> - AssertionError: AssertionError not raised</li>
+</ul>
+
+</body>
+</html>
+```
