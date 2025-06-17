@@ -1,0 +1,11 @@
+[run]
+parallel = True
+branch = True
+source = generated_code
+concurrency = thread
+omit =
+    */__init__.py
+
+[paths]
+source =
+    .

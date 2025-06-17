@@ -1,0 +1,46 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test Report</title>
+<style>
+body { font-family: sans-serif; }
+table { width: 100%; border-collapse: collapse; }
+th, td { border: 1px solid black; padding: 8px; }
+th { background-color: #f2f2f2; }
+</style>
+</head>
+<body>
+<h1>Test Report</h1>
+
+<h2>Summary</h2>
+<table>
+  <tr>
+    <th>Total Tests</th>
+    <th>Passed</th>
+    <th>Failed</th>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>1</td>
+    <td>4</td>
+  </tr>
+</table>
+
+<h2>Test Results</h2>
+<ul>
+  <li>test_login_empty_password: <span style="color:red;">Failed</span><br>
+  AssertionError: Test failed unexpectedly: Exception not raised</li>
+  <li>test_login_empty_username: <span style="color:red;">Failed</span><br>
+  AssertionError: Test failed unexpectedly: Exception not raised</li>
+  <li>test_login_invalid_credentials: <span style="color:red;">Failed</span><br>
+  AssertionError: Test failed unexpectedly: Exception not raised</li>
+  <li>test_login_invalid_url: <span style="color:red;">Failed</span><br>
+  AssertionError: Test failed unexpectedly: False is not true</li>
+  <li>test_login_valid_credentials: <span style="color:green;">Passed</span></li>
+
+</ul>
+
+</body>
+</html>
+```

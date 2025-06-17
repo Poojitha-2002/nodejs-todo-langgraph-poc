@@ -123,10 +123,31 @@ def generate_test_case(state: AppState) -> dict:
         return {"error": str(e)}
 
 
-def run_tests_and_get_output(test_file_path: str) -> str:
-    command = ["python", "-m", "unittest", test_file_path]
+# def run_tests_and_get_output(test_file_path: str) -> str:
+#     command = ["python", "-m", "unittest", test_file_path]
+#     result = subprocess.run(
+#         command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+#     )
+#     return result.stdout
+
+
+def run_tests_and_get_output(test_module: str) -> str:
+    env = os.environ.copy()
+    env["COVERAGE_PROCESS_START"] = ".coveragerc"
+
+    command = [
+        sys.executable,
+        "-m",
+        "coverage",
+        "run",
+        "--parallel-mode",
+        "-m",
+        "unittest",
+        test_module,  # <-- this is the module name
+    ]
+
     result = subprocess.run(
-        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=env
     )
     return result.stdout
 
@@ -214,14 +235,8 @@ def generate_test_case_with_report(
         state["error"] = f"Pre-validation error: {str(e)}"
         return state
 
-    raw_output = run_tests_and_get_output(test_file_path)
+    raw_output = run_tests_and_get_output("generated_code.test_case")
 
-    # if "Traceback" in raw_output and "login" in raw_output:
-    #     print("❌ Test failed. Passing error to code generator.")
-    #     state["error"] = raw_output  # this is where your raw_output goes
-    #     state["status"] = "fail"
-    #     state["retry_count"] = state.get("retry_count", 0) + 1
-    #     return state
 
     report = generate_test_report_from_output(raw_output)
     report_path = "generated_code/test_report.html"
