@@ -85,7 +85,7 @@ def generate_selenium_code(state: AppState) -> dict:
     ])
 
     messages = prompt.format_messages(
-    messages=state.get("messages", []),
+    messages=state['messages'],
     page_html=page_html,
     login_url=login_url,
     login_spec=login_spec,
@@ -110,7 +110,9 @@ def generate_selenium_code(state: AppState) -> dict:
 
     chain = prompt | llm | StrOutputParser()
 
-    response = chain.invoke({"messages": [HumanMessage(content=messages[-1].content)]})
+    # response = chain.invoke({"messages": [HumanMessage(content=messages[-1].content)]})
+
+    response = chain.invoke({'messages': messages})
 
     generated_code = extract_code_blocks(response)
 
