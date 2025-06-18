@@ -7,5 +7,4 @@ omit =
     */__init__.py
 
 [paths]
-source =
-    .
+source = .

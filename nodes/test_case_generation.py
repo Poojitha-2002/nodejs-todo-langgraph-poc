@@ -243,6 +243,8 @@ def generate_test_case_with_report(
     save_test_report(report, report_path)
 
     report_generated = os.path.exists(report_path)
+    status = "success" if report_generated else "fail"
+    print("Test Case Generation Status:", status)
     return {
         "test_file_path": test_file_path,
         "test_code": parsed_code,
