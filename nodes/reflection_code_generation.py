@@ -12,7 +12,7 @@ def reflection_on_code_gen(state: ReflectionState):
     You are an intelligent QA engineer who is skilled at reading, reviewing and crafting efficient testcases. You will be given a selenium code which is to test some functional specifications of a page. Your task is to go through the code, understand it and see if the code is upto the mark. 
 
     ### INSTRUCTIONS
-    See to the fact that the code given is good enough to be sent to the next node. If you find there was a mistake in the generated code, come up with constructive criticism for the code to improve. 
+    See to the fact that the code given is good enough to be sent to the next node. If you find there was a mistake in the generated code, come up with constructive criticism for the code to improve. If you think the code is syntactically correct and has been produced based on the given context, then consider yourself satisfied.
     If the code is satisfactory and it can pass onto the next node, then return STOP and nothing else. Just STOP, no nextline, no spaces, no special characters, just STOP.
 
     Here's the selenium code:
