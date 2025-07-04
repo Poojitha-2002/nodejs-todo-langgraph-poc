@@ -5,9 +5,9 @@ from webdriver_manager.chrome import ChromeDriverManager
 from schemas.state_schemas import AppState
 import time
 
-def load_login_page(state: AppState):
+def load_page(state: AppState):
     print("Initializing Selenium WebDriver...")
-    url = state["login_url"]
+    url = state["url"]
     
     # Set up Chrome options
     chrome_options = Options()
@@ -27,7 +27,8 @@ def load_login_page(state: AppState):
         # Get page details
         page_title = driver.title
         html_body = driver.page_source
-        screenshot_path = "login_page.png"
+        image_path = url.replace('http://127.0.0.1:4000/','')
+        screenshot_path = f"screenshots/{image_path}.png"
         driver.save_screenshot(screenshot_path)
         
         print(f"\nPage loaded successfully! saved as: {screenshot_path}")
