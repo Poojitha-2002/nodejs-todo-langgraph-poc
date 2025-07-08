@@ -29,7 +29,7 @@ def extract_code_blocks(text: str) -> str:
 
 def generate_test_case(state: AppState) -> dict:
     selenium_code_path = state["selenium_code_path"]
-    login_url = state["login_url"]
+    url = state["url"]
     email = state["email"]
     password = state["password"]
     home_page_url = state["home_page_url"]
@@ -42,8 +42,8 @@ def generate_test_case(state: AppState) -> dict:
 
     if not selenium_code:
         return {"error": "Missing selenium_code or valid selenium_code_path in state."}
-    if not login_url:
-        return {"error": "Missing login_url in state."}
+    if not url:
+        return {"error": "Missing url in state."}
     if not home_page_url:
         return {"error": "Missing home_page_url in state."}
 
@@ -72,14 +72,14 @@ def generate_test_case(state: AppState) -> dict:
                 **Instructions for `test_case.py`:**
                 - Import relevant functions, classes, or the entire module from `generated_code.generated_selenium_code`. Do NOT redefine the original Selenium logic.
                 - For each distinct functionality or interaction identified in the `selenium_code` (e.g., navigating to a page, filling a form, clicking a button, asserting element presence), create dedicated test methods.
-                - When calling Selenium functions from `generated_selenium_code`, ensure all required parameters are passed. If a function expects a `url` parameter, use `'{login_url}'` as the base URL.
+                - When calling Selenium functions from `generated_selenium_code`, ensure all required parameters are passed. If a function expects a `url` parameter, use `'{url}'` as the base URL.
                 - Implement **positive test cases** (e.g., successful navigation, correct data submission, expected element interaction).
                 - Implement **negative test cases** (e.g., invalid data input, missing required fields, attempting actions on non-existent elements, unexpected pop-ups, handling errors).
                 - Use `unittest` assertions (e.g., `self.assertTrue()`, `self.assertFalse()`, `self.assertEqual()`, `self.assertIn()`) to verify outcomes.
                 - Manage WebDriver instance correctly: Initialize it in `setUp` and quit it in `tearDown` for each test class.
                 - Ensure the `test_case.py` is self-contained and executable.
                 **Use the following default values where appropriate for test scenarios (feel free to vary for negative tests):**
-                - **Base Login URL**: `'{login_url}'`
+                - **Base Login URL**: `'{url}'`
                 - **Default Username**: `'{email}'`
                 - **Default Password**: `'{password}'`
                 - **Expected Home Page URL Segment (for assertions)**: `'{home_page_url}'`
@@ -91,7 +91,7 @@ def generate_test_case(state: AppState) -> dict:
     )
 
     formatted_messages = prompt.format_messages(
-        login_url=login_url,
+        url=url,
         selenium_code=selenium_code,
         email=email,
         password=password,
@@ -207,7 +207,7 @@ def generate_test_case_with_report(
     test_file_path = result["test_file_path"]
     parsed_code = result["test_code"]
 
-    login_url = state.get("login_url")
+    url = state.get("url")
     username = state.get("email")
     password = state.get("password")
     home_page_url = state.get("home_page_url")
@@ -216,7 +216,7 @@ def generate_test_case_with_report(
 
         selenium_code_path = state["selenium_code_path"]
         login = load_login_function_from_path(selenium_code_path)
-        prevalidate_result = login(login_url, username, password, home_page_url)
+        prevalidate_result = login(url, username, password, home_page_url)
 
         if isinstance(prevalidate_result, dict) and not prevalidate_result.get(
             "success", True

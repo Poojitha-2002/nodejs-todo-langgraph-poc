@@ -7,12 +7,13 @@ class AppState(TypedDict):
     readme: str
     login_context: str
     spec_md: str
-    login_spec: str
-    login_url: str
+    # login_spec: str
+    url: str
     page_html: str
     selenium_code_path: str
     image_path: Optional[str]
     driver_path: Optional[str]
+    test_case_path: Optional[str]
     retry_count: Optional[int]
     email: Optional[str]
     password : Optional[str]

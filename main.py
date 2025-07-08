@@ -13,11 +13,11 @@ def main():
 
     step3_login_test_app = create_login_test_graph()
     inputs = {
-        "login_spec": spec_md,
-        "login_url": "http://127.0.0.1:4003/login",
+        "spec_md": spec_md,
+        "url": "http://127.0.0.1:4000/login",
         "email": os.getenv("EMAIL"),
         "password": os.getenv("PASSWORD"),
-        "home_page_url": "http://127.0.0.1:4003/dashboard",
+        "home_page_url": "http://127.0.0.1:4000/dashboard",
     }
     step3_result = step3_login_test_app.invoke(inputs)
 

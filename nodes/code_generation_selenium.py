@@ -39,12 +39,12 @@ def generate_selenium_code(state: AppState) -> dict:
     logging.info("Section: Generate Selenium Code")
 
     url = state["url"] 
-    logging.info("URL: ", url)
+    logging.info(f"URL: {url}")
     spec_md = state["spec_md"]
-    logging.info("SPEC_MD: ", spec_md)
+    # logging.info("SPEC_MD: ", spec_md)
     # page_html = state["page_html"]
     page_html = state.get("page_html")
-    logging.info("PAGE_HTML here: \n: ",page_html)
+    # logging.info("PAGE_HTML here: \n: ",page_html)
     image_path = state.get("image_path")
     webdriver_path = state.get("driver_path", "")
     retry_count = state.get("retry_count", 0)
@@ -147,12 +147,15 @@ def generate_selenium_code(state: AppState) -> dict:
     output_dir = "generated_code"
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, "generated_selenium_code.py")
+
+    if not os.access(output_dir, os.W_OK):
+        logging.error(f"Output directory '{output_dir}' is not writable. Please check permissions.")
+        raise PermissionError(f"Cannot write to output directory: {output_dir}")
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(generated_code)
 
     print("Selenium code generated successfully!")
 
-    # return {"selenium_code_path": output_path, "retry_count": retry_count + 1}
     return {
         "selenium_code_path": output_path,
         "retry_count": retry_count + 1,

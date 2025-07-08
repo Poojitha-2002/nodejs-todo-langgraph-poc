@@ -83,7 +83,7 @@ HTML Body:
     else:
         corrected_test_code = extract_code_blocks(response)
         output_dir = "generated_code"
-        corrected_test_case_path = os.path.join(output_dir, "corrected_test_case.py")
+        corrected_test_case_path = os.path.join(output_dir, "generated_selenium_code.py")
         with open(corrected_test_case_path, "w", encoding="utf-8") as f:
             f.write(corrected_test_code)
 

@@ -1,5 +1,5 @@
 from langgraph.graph import StateGraph
-from nodes.page_load_selenium import load_login_page
+from nodes.page_load_selenium import load_page
 from nodes.code_generation_selenium import generate_selenium_code
 from nodes.reflection_code_generation import reflection_on_code_gen
 from nodes.test_case_generation import generate_test_case_with_report
@@ -8,7 +8,7 @@ from schemas.state_schemas import AppState
 import logging
 def create_login_test_graph():
     graph = StateGraph(AppState)
-    graph.add_node("load_page", load_login_page)
+    graph.add_node("load_page", load_page)
     graph.add_node("generate_selenium_code", generate_selenium_code)
     graph.add_node("selenium_reflect_code", reflection_on_code_gen)
     graph.add_node("generate_test_case_with_report", generate_test_case_with_report)
