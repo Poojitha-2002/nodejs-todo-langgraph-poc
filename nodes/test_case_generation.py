@@ -5,12 +5,13 @@ from typing import Any
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from schemas.state_schemas import AppState
 import importlib.util
 import sys
 
 load_dotenv()
-api_key = os.getenv("GEMINI_API_KEY")
+# api_key = os.getenv("GEMINI_API_KEY")
 
 
 def load_login_function_from_path(path: str):
@@ -99,23 +100,24 @@ def generate_test_case(state: AppState) -> dict:
     )
 
     try:
-        llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash-latest", google_api_key=api_key, temperature=0
-        )
+        # llm = ChatGoogleGenerativeAI(
+        #     model="gemini-1.5-flash-latest", google_api_key=api_key, temperature=0
+        # )
+        llm = ChatOpenAI(model="gpt-4o-mini", api_key=os.environ["OPENAI_API_KEY"])
         response = llm.invoke(formatted_messages)
         test_code_raw = response.content
         parsed_code = extract_code_blocks(test_code_raw)
 
         output_dir = "generated_code"
         os.makedirs(output_dir, exist_ok=True)
-        test_file_path = os.path.join(output_dir, "test_case.py")
+        test_case_path = os.path.join(output_dir, "test_case.py")
 
-        with open(test_file_path, "w", encoding="utf-8") as f:
+        with open(test_case_path, "w", encoding="utf-8") as f:
             f.write(parsed_code)
 
-        print(f"Test case generated and saved to '{test_file_path}'.")
+        print(f"Test case generated and saved to '{test_case_path}'.")
         return {
-            "test_file_path": test_file_path,
+            "test_case_path": test_case_path,
             "test_code": parsed_code,
         }
     except Exception as e:
@@ -174,9 +176,10 @@ def generate_test_report_from_output(raw_output: str) -> str:
 
     messages = prompt.format_messages(raw_output=raw_output)
     try:
-        llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash-latest", google_api_key=api_key, temperature=0.2
-        )
+        # llm = ChatGoogleGenerativeAI(
+        #     model="gemini-1.5-flash-latest", google_api_key=api_key, temperature=0.2
+        # )
+        llm = ChatOpenAI(model="gpt-4o-mini", api_key=os.environ["OPENAI_API_KEY"])
         response = llm.invoke(messages)
         return response.content
     except Exception as e:
@@ -196,7 +199,7 @@ def generate_test_case_with_report(
     result = generate_test_case(state)
     if "error" in result:
         return {
-            "test_file_path": None,
+            "test_case_path": None,
             "test_code": None,
             "report_generated": False,
             "status": "fail",
@@ -204,7 +207,7 @@ def generate_test_case_with_report(
         }
     state["error"] = None
 
-    test_file_path = result["test_file_path"]
+    test_case_path = result["test_case_path"]
     parsed_code = result["test_code"]
 
     url = state.get("url")
@@ -246,7 +249,7 @@ def generate_test_case_with_report(
     status = "success" if report_generated else "fail"
     print("Test Case Generation Status:", status)
     return {
-        "test_file_path": test_file_path,
+        "test_case_path": test_case_path,
         "test_code": parsed_code,
         "report_generated": report_generated,
         "status": "success" if report_generated else "fail",

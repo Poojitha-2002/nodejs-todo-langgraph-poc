@@ -3,6 +3,7 @@ import re
 import logging
 from schemas.state_schemas import AppState
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
@@ -64,7 +65,8 @@ HTML Body:
         else test_case_code
     )
 
-    llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.2)
+    # llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.2)
+    llm = ChatOpenAI(model='gpt-4o-mini', api_key=os.environ['OPENAI_API_KEY'])
     chain = prompt | llm | StrOutputParser()
 
     response = chain.invoke(
@@ -88,7 +90,7 @@ HTML Body:
             f.write(corrected_test_code)
 
         logging.info("Reflected and corrected test case saved.")
-        state["test_case_path"] = corrected_test_case_path
+        state["selenium_code_path"] = corrected_test_case_path
         state["retry_count"] = state.get("retry_count", 0) + 1
         state["messages"] = state.get("messages", []) + [HumanMessage(content=response)]
 
