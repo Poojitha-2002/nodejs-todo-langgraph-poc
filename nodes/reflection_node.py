@@ -30,11 +30,11 @@ def reflect_and_correct_test_case(state: AppState) -> AppState:
         test_case_code = f.read()
 
     test_case_critique_prompt = """
-### ROLE
-You are a detail-oriented QA engineer. You will receive a Selenium function, a corresponding test case, an error message from a failed test run, and the HTML body of the page under test.
-
-### INSTRUCTIONS
-Your task is to analyze the compatibility of the test case with the Selenium function. If the test case is broken or incompatible, provide a **corrected** version of the test case as a Python function that can run successfully. If the test case looks perfect and ready for execution, then **only return the word `STOP`** (no code, no whitespace, no newline).
+    ### ROLE
+    You are an intelligent QA engineer who is skilled at reading, reviewing and crafting efficient testcases. You will be given a selenium code which is to test some functional specifications of a page. Your task is to go through the code, understand it and see if the code is upto the mark.
+    ### INSTRUCTIONS
+    See to the fact that the code given is good enough to be sent to the next node. If you find there was a mistake in the generated code, come up with constructive criticism for the code to improve. If you think the code is syntactically correct and has been produced based on the given context, then consider yourself satisfied.
+    If the code is satisfactory and it can pass onto the next node, then return STOP and nothing else. Just STOP, no nextline, no spaces, no special characters, just STOP.
 
 ### CONTEXT:
 Selenium Function:

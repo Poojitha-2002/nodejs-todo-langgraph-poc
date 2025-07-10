@@ -13,13 +13,15 @@ load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 
 
-def load_login_function_from_path(path: str):
-    module_name = "dynamic_login_module"
+import inspect
+
+
+def load_generated_function(path: str):
+    module_name = "dynamic_generated_module"
     spec = importlib.util.spec_from_file_location(module_name, path)
     module = importlib.util.module_from_spec(spec)
     sys.modules[module_name] = module
     spec.loader.exec_module(module)
-    return module.login
 
 
 def extract_code_blocks(text: str) -> str:
@@ -29,10 +31,11 @@ def extract_code_blocks(text: str) -> str:
 
 def generate_test_case(state: AppState) -> dict:
     selenium_code_path = state["selenium_code_path"]
-    login_url = state["login_url"]
+    specific_url = state["specific_url"]
     email = state["email"]
     password = state["password"]
-    home_page_url = state["home_page_url"]
+    redirect_url = state["redirect_url"]
+    functional_spec = state["spec_md"]
 
     if selenium_code_path and os.path.exists(selenium_code_path):
         with open(selenium_code_path, "r", encoding="utf-8") as f:
@@ -42,60 +45,63 @@ def generate_test_case(state: AppState) -> dict:
 
     if not selenium_code:
         return {"error": "Missing selenium_code or valid selenium_code_path in state."}
-    if not login_url:
-        return {"error": "Missing login_url in state."}
-    if not home_page_url:
-        return {"error": "Missing home_page_url in state."}
+    if not specific_url:
+        return {"error": "Missing specific_url in state."}
+    if not redirect_url:
+        return {"error": "Missing redirect_url in state."}
+    if not functional_spec:
+        return {"error": "Missing functional_spec in state."}
 
     prompt = ChatPromptTemplate.from_messages(
         [
             (
                 "system",
-                "You are a highly skilled Python test engineer specializing in Selenium WebDriver. "
-                "Your task is to generate comprehensive and executable `unittest` code for the given Selenium script. "
-                "Analyze the provided Selenium code to identify all functions and their parameters. "
-                "For each identified functionality, create dedicated test methods "
-                "that cover **all possible positive and negative test scenarios**. Focus on robust test coverage, "
-                "including valid inputs, invalid inputs, edge cases, and error handling. "
-                "Your output must be **only** executable Python `unittest` code with appropriate imports and "
-                "clean structure. Do not include any markdown fences (```) or conversational text. "
-                "**Crucially, ensure WebDriver setup (`self.driver = webdriver.Chrome()`) is ONLY in `setUp` "
-                "and teardown (`self.driver.quit()`) is ONLY in `tearDown`**. "
-                "NEVER call `driver.quit()` or `driver.close()` within individual test methods. "
-                "Pass all necessary arguments to the Selenium functions, including URLs if the function expects one."
-                "Infer sensible dummy values for credentials, URLs, or other inputs when not explicitly provided.",
+                """You are a senior QA automation engineer specializing in writing robust, maintainable test cases using
+                - Python's built-in `unittest` framework and Selenium.
+                - The Selenium driver session (including cookies and current URL) is already stored in a file named `driver_session.pkl`.
+
+                Your test code must:
+                - Load this pickle file in the `setUpClass()` method to initialize the WebDriver.
+                - Navigate to the base domain using `driver.get("http://<domain>")` before setting cookies with `add_cookie()`. This is required to avoid InvalidCookieDomainException.
+                - After setting cookies, navigate to the original stored URL.
+
+                You must analyze a functional specification and the provided Selenium automation code and generate a full test suite that ensures the implemented automation meets the spec.
+
+                Use best practices including modular design, assertive checks, negative path testing, and proper driver management via `setUpClass()` and `tearDownClass()`.
+
+                """,
             ),
             (
                 "human",
-                """Given the following Python Selenium script, which is located at `generated_code/generated_selenium_code.py`,
-                generate a Python `unittest` file named `test_case.py`.
-                **Instructions for `test_case.py`:**
-                - Import relevant functions, classes, or the entire module from `generated_code.generated_selenium_code`. Do NOT redefine the original Selenium logic.
-                - For each distinct functionality or interaction identified in the `selenium_code` (e.g., navigating to a page, filling a form, clicking a button, asserting element presence), create dedicated test methods.
-                - When calling Selenium functions from `generated_selenium_code`, ensure all required parameters are passed. If a function expects a `url` parameter, use `'{login_url}'` as the base URL.
-                - Implement **positive test cases** (e.g., successful navigation, correct data submission, expected element interaction).
-                - Implement **negative test cases** (e.g., invalid data input, missing required fields, attempting actions on non-existent elements, unexpected pop-ups, handling errors).
-                - Use `unittest` assertions (e.g., `self.assertTrue()`, `self.assertFalse()`, `self.assertEqual()`, `self.assertIn()`) to verify outcomes.
-                - Manage WebDriver instance correctly: Initialize it in `setUp` and quit it in `tearDown` for each test class.
-                - Ensure the `test_case.py` is self-contained and executable.
-                **Use the following default values where appropriate for test scenarios (feel free to vary for negative tests):**
-                - **Base Login URL**: `'{login_url}'`
-                - **Default Username**: `'{email}'`
-                - **Default Password**: `'{password}'`
-                - **Expected Home Page URL Segment (for assertions)**: `'{home_page_url}'`
-                **Provided Selenium Code (from `generated_code/generated_selenium_code.py`):**
-                {selenium_code}
+                """Please write a complete Python unittest-based test suite using the following inputs:
+                - **Specific URL**: `{specific_url}`
+                - **Functional Specification**:'{functional_spec}'
+                - **Selenium Automation Code**:```python{selenium_code}```
+                ### Output Instructions:
+                - Use the `unittest` module from the Python standard library.
+                - Include a test class inheriting from `unittest.TestCase`.
+                - In the `setUpClass()` method:
+                    - Load the driver session from `driver_session.pkl`
+                    - Initialize a Selenium Chrome driver and inject cookies from the file.
+                    - Navigate to the previously stored page URL. 
+                - Implement test methods (prefixed with `test_`) for each behavior in the spec.
+                - Write both positive and negative test cases.
+                - Include `assert` statements to verify expected outcomes (element presence, values, navigation, etc.).
+                - Reuse code or methods from the provided Selenium script where applicable.
+                - Include docstrings and inline comments to explain each test.
+                - Output only the complete Python test code — no explanation, no extra text.
                 """,
             ),
         ]
     )
 
     formatted_messages = prompt.format_messages(
-        login_url=login_url,
+        specific_url=specific_url,
         selenium_code=selenium_code,
-        email=email,
-        password=password,
-        home_page_url=home_page_url,
+        # email=email,
+        # password=password,
+        # redirect_url=redirect_url,
+        functional_spec=functional_spec,
     )
 
     try:
@@ -108,14 +114,14 @@ def generate_test_case(state: AppState) -> dict:
 
         output_dir = "generated_code"
         os.makedirs(output_dir, exist_ok=True)
-        test_file_path = os.path.join(output_dir, "test_case.py")
+        test_case_path = os.path.join(output_dir, "test_case.py")
 
-        with open(test_file_path, "w", encoding="utf-8") as f:
+        with open(test_case_path, "w", encoding="utf-8") as f:
             f.write(parsed_code)
 
-        print(f"Test case generated and saved to '{test_file_path}'.")
+        print(f"Test case generated and saved to '{test_case_path}'.")
         return {
-            "test_file_path": test_file_path,
+            "test_case_path": test_case_path,
             "test_code": parsed_code,
         }
     except Exception as e:
@@ -123,33 +129,33 @@ def generate_test_case(state: AppState) -> dict:
         return {"error": str(e)}
 
 
-# def run_tests_and_get_output(test_file_path: str) -> str:
-#     command = ["python", "-m", "unittest", test_file_path]
-#     result = subprocess.run(
-#         command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
-#     )
-#     return result.stdout
-
-
-def run_tests_and_get_output(test_module: str) -> str:
-    env = os.environ.copy()
-    env["COVERAGE_PROCESS_START"] = ".coveragerc"
-
-    command = [
-        sys.executable,
-        "-m",
-        "coverage",
-        "run",
-        "--parallel-mode",
-        "-m",
-        "unittest",
-        test_module,  # <-- this is the module name
-    ]
-
+def run_tests_and_get_output(test_case_path: str) -> str:
+    command = ["python", "-m", "unittest", "generated_code.test_case"]
     result = subprocess.run(
-        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=env
+        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
     )
     return result.stdout
+
+
+# def run_tests_and_get_output(test_module: str) -> str:
+#     env = os.environ.copy()
+#     env["COVERAGE_PROCESS_START"] = ".coveragerc"
+
+#     command = [
+#         sys.executable,
+#         "-m",
+#         "coverage",
+#         "run",
+#         "--parallel-mode",
+#         "-m",
+#         "unittest",
+#         test_module,  # <-- this is the module name
+#     ]
+
+#     result = subprocess.run(
+#         command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=env
+#     )
+#     return result.stdout
 
 
 def generate_test_report_from_output(raw_output: str) -> str:
@@ -196,59 +202,35 @@ def generate_test_case_with_report(
     result = generate_test_case(state)
     if "error" in result:
         return {
-            "test_file_path": None,
+            "test_report_path": None,
             "test_code": None,
             "report_generated": False,
             "status": "fail",
             "error": result["error"],
         }
-    state["error"] = None
 
-    test_file_path = result["test_file_path"]
+    state["error"] = None
+    test_report_path = result["test_case_path"]
     parsed_code = result["test_code"]
 
-    login_url = state.get("login_url")
-    username = state.get("email")
-    password = state.get("password")
-    home_page_url = state.get("home_page_url")
-
-    try:
-
-        selenium_code_path = state["selenium_code_path"]
-        login = load_login_function_from_path(selenium_code_path)
-        prevalidate_result = login(login_url, username, password, home_page_url)
-
-        if isinstance(prevalidate_result, dict) and not prevalidate_result.get(
-            "success", True
-        ):
-            state["status"] = "fail"
-            state["error"] = prevalidate_result.get("error", "Unknown error")
-            return state
-        else:
-            try:
-                prevalidate_result.quit()
-            except Exception:
-                pass
-            state["error"] = None
-    except Exception as e:
-        state["status"] = "fail"
-        state["error"] = f"Pre-validation error: {str(e)}"
-        return state
-
-    raw_output = run_tests_and_get_output("generated_code.test_case")
-
+    # ✅ Just run the test case without trying to call any generated function
+    raw_output = run_tests_and_get_output("test_case_path")
+    print("Generating test report from raw output...")
 
     report = generate_test_report_from_output(raw_output)
+    print("Saving test report...")
     report_path = "generated_code/test_report.html"
     save_test_report(report, report_path)
 
     report_generated = os.path.exists(report_path)
     status = "success" if report_generated else "fail"
     print("Test Case Generation Status:", status)
+
     return {
-        "test_file_path": test_file_path,
+        "test_report_path": test_report_path,
         "test_code": parsed_code,
         "report_generated": report_generated,
-        "status": "success" if report_generated else "fail",
+        "status": status,
         "error": None if report_generated else "Report not generated",
+        "test_report_path": report_path if report_generated else None,
     }
